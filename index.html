@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>App Inventor Academy – MVP Prototype</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#f5f7fa;--card:#fff;--ink:#14213d;--mut:#5b6678;--navy:#14213d;--navy-ink:#fff;--green:#4c8a1f;--greenbg:#e6f2d8;--line:#d9dfe8;--warn:#b3261e;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1624;--card:#18223a;--ink:#eef2f8;--mut:#a3aec2;--navy:#0a1020;--green:#8bc34a;--greenbg:#26391a;--line:#2b3957;--warn:#ff8a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1624;--card:#18223a;--ink:#eef2f8;--mut:#a3aec2;--navy:#0a1020;--green:#8bc34a;--greenbg:#26391a;--line:#2b3957;--warn:#ff8a80;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*:before,*:after{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 "Trebuchet MS","Segoe UI",system-ui,sans-serif}
+h1,h2,h3{font-family:Georgia,"Times New Roman",serif;line-height:1.2;margin:0 0 .5rem}
+h1{font-size:clamp(2rem,6vw,3.2rem)}h2{font-size:1.7rem}h3{font-size:1.1rem}
+p{margin:.3rem 0 .8rem}
+header{background:var(--navy);color:var(--navy-ink);padding:.7rem 1rem;display:flex;gap:1rem;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.brand{font-weight:700;display:flex;gap:.5rem;align-items:center}
+.logo{width:28px;height:28px;border-radius:7px;background:#8bc34a;display:grid;place-items:center;color:#14213d;font-weight:800}
+.lang button{background:none;border:1px solid #ffffff66;color:#fff;padding:.25rem .7rem;cursor:pointer;font:inherit}
+.lang button:first-child{border-radius:6px 0 0 6px}.lang button:last-child{border-radius:0 6px 6px 0}
+.lang button.on{background:#8bc34a;color:#14213d;border-color:#8bc34a}
+.steps{display:flex;gap:4px;padding:.6rem 1rem;max-width:860px;margin:0 auto}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line)}.steps i.on{background:var(--green)}
+main{max-width:860px;margin:0 auto;padding:0 1rem 3rem}
+section{display:none}section.show{display:block}
+.hero{background:var(--navy);color:#fff;border-radius:14px;padding:2.5rem 1.5rem;margin-top:.5rem}
+.hero p{color:#cfd8e6;max-width:52ch}
+.btn{display:inline-block;background:var(--green);color:#fff;border:0;border-radius:8px;padding:.75rem 1.3rem;font:inherit;font-weight:700;cursor:pointer}
+:root[data-theme="dark"] .btn,.hero .btn{color:#14213d;background:#8bc34a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .btn{color:#14213d}}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.alt{background:none;color:var(--ink);border:1px solid var(--line)}
+:focus-visible{outline:3px solid #f4a300;outline-offset:2px}
+.grid{display:grid;gap:.8rem;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin:1rem 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:1rem}
+.card.sel{border:2px solid var(--green);background:var(--greenbg)}
+.pill{display:inline-block;background:var(--greenbg);color:var(--green);border-radius:99px;padding:.1rem .7rem;font-size:.85rem;font-weight:700}
+label{display:block;font-weight:700;margin:.7rem 0 .2rem}
+input,select,textarea{width:100%;padding:.6rem;border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--ink);font:inherit}
+.err{color:var(--warn);font-size:.9rem;min-height:1.2rem}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:.4rem 0}.bar b{display:block;height:100%;background:var(--green);transition:width .3s}
+.stat{font:700 1.8rem Georgia,serif}
+.cert{border:3px double var(--green);background:var(--card);padding:1.8rem;border-radius:6px;text-align:center}
+.cert .nm{font:700 2rem Georgia,serif;margin:.6rem 0}
+.lock{opacity:.6;border-style:dashed}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}
+.note{font-size:.85rem;color:var(--mut)}
+.toast{position:fixed;left:50%;bottom:calc(1rem + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--navy);color:#fff;padding:.7rem 1.2rem;border-radius:8px;display:none;max-width:90%}
+@media print{header,.steps,.row,.fac,.toast{display:none}}
+details.card{margin:.5rem 0}summary{cursor:pointer;font-weight:700}
+.fac{margin-top:2rem;font-size:.85rem}.fac pre{white-space:pre-wrap;background:var(--card);border:1px solid var(--line);padding:.6rem;border-radius:6px}
+.cert.wait{opacity:.35}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><span class="logo">A</span><span>App Inventor Academy</span></div>
+  <div class="lang" role="group" aria-label="Language" data-a="aria_lang"><button id="b-en" class="on">EN</button><button id="b-es">ES</button></div>
+</header>
+<div class="steps" id="steps" aria-hidden="true"></div>
+<main>
+
+<section id="s1">
+  <div class="hero">
+    <h1 data-t="tag"></h1>
+    <p data-t="sub"></p>
+    <button class="btn" data-go="2" data-t="cta"></button>
+    <p class="note" style="color:#cfd8e6;margin-top:1rem" data-t="proof"></p><p class="note" style="color:#cfd8e6" data-t="sp"></p>
+  </div>
+  <div class="grid">
+    <div class="card"><h3 data-t="f1h"></h3><p data-t="f1p"></p></div>
+    <div class="card"><h3 data-t="f2h"></h3><p data-t="f2p"></p></div>
+    <div class="card"><h3 data-t="f3h"></h3><p data-t="f3p"></p></div>
+  </div>
+</section>
+
+<section id="s2">
+  <h2 data-t="regh"></h2>
+  <p><span class="pill" data-t="regtime"></span></p>
+  <div class="card">
+    <label for="f-name" data-t="lname"></label><input id="f-name" autocomplete="name">
+    <label for="f-mail" data-t="lmail"></label><input id="f-mail" type="email" autocomplete="email">
+    <label for="f-country" data-t="lcountry"></label>
+    <select id="f-country"><option value="" data-t="choose"></option><option value="CO" data-t="c_co"></option><option value="MX" data-t="c_mx"></option><option value="DO" data-t="c_do"></option><option value="XX" data-t="other"></option></select>
+    <label for="f-level" data-t="llevel"></label>
+    <select id="f-level"><option value="" data-t="choose"></option><option data-t="lv1"></option><option data-t="lv2"></option><option data-t="lv3"></option></select>
+    <label for="f-area" data-t="larea"></label><input id="f-area">
+    <label for="f-pw" data-t="lpw"></label><input id="f-pw" type="password" autocomplete="new-password">
+    <div class="err" id="reg-err" role="alert"></div>
+    <button class="btn" id="reg-btn" data-t="create"></button>
+  </div>
+</section>
+
+<section id="s3">
+  <h2><span data-t="hello"></span> <span class="nm-out"></span></h2>
+  <p data-t="dashsub"></p>
+  <div class="card sel"><span class="pill" data-t="rec"></span><h3 data-t="m1t"></h3><p data-t="m1d"></p>
+    <button class="btn" data-go="4" data-t="continue"></button></div>
+  <div class="grid">
+    <div class="card"><div class="stat">0/3</div><span data-t="st1"></span></div>
+    <div class="card"><div class="stat">0</div><span data-t="st2"></span></div>
+    <div class="card"><div class="stat">1</div><span data-t="st3"></span></div>
+  </div>
+</section>
+
+<section id="s4">
+  <h2 data-t="m1t"></h2>
+  <p data-t="m1goal"></p>
+  <details class="card les"><summary><span data-t="a1h"></span> <span class="pill">6 min</span></summary><p class="note" data-t="a1p"></p><p data-t="a1b"></p></details>
+  <details class="card les"><summary><span data-t="a2h"></span> <span class="pill">9 min</span></summary><p class="note" data-t="a2p"></p><p data-t="a2b"></p></details>
+  <details class="card les"><summary><span data-t="a3h"></span> <span class="pill">5 min</span></summary><p class="note" data-t="a3p"></p><p data-t="a3b"></p></details><p class="note" data-t="samp"></p>
+  <div class="row"><button class="btn" data-go="5" data-t="start1"></button></div>
+</section>
+
+<section id="s5">
+  <div class="hero"><h2 data-t="mission"></h2><p data-t="missionp"></p></div>
+  <h3 style="margin-top:1.2rem" data-t="pick"></h3>
+  <div class="grid" id="types" role="radiogroup">
+    <div class="card" tabindex="0" role="radio" aria-checked="false" data-ev="photo"><h3 data-t="e1h"></h3><p data-t="e1p"></p></div>
+    <div class="card" tabindex="0" role="radio" aria-checked="false" data-ev="video"><h3 data-t="e2h"></h3><p data-t="e2p"></p></div>
+    <div class="card" tabindex="0" role="radio" aria-checked="false" data-ev="doc"><h3 data-t="e3h"></h3><p data-t="e3p"></p></div>
+  </div>
+  <h3 data-t="exh"></h3>
+  <div class="grid">
+    <div class="card"><p data-t="x1"></p></div><div class="card"><p data-t="x2"></p></div><div class="card"><p data-t="x3"></p></div>
+  </div>
+  <button class="btn" id="act-btn" data-go="6" data-t="upload" disabled></button>
+</section>
+
+<section id="s6">
+  <h2 data-t="evh"></h2>
+  <div class="bar"><b id="evbar" style="width:0"></b></div>
+  <p class="note"><span id="evpct">0</span>% — <span data-t="evnote"></span></p>
+  <div class="card"><h3 data-t="p1h"></h3><input type="file" id="ev-file" aria-label="Upload file" data-a="aria_file"><p class="note" data-t="p1n"></p><button class="btn alt" id="sample" data-t="usesample"></button></div><br>
+  <div class="card"><h3 data-t="p2h"></h3><textarea id="ev-desc" rows="3" data-p="p2ph"></textarea></div><br>
+  <div class="card"><h3 data-t="p3h"></h3>
+    <select id="ev-ctx"><option value="" data-t="choose"></option><option data-t="c1"></option><option data-t="c2"></option><option data-t="c3"></option></select></div>
+  <div class="row"><button class="btn" id="ev-btn" data-go="7" data-t="submit" disabled></button></div><p class="note" id="ev-hint" role="status"></p>
+</section>
+
+<section id="s7">
+  <p><span class="pill" id="vpill"></span></p>
+  <div class="cert" id="cert">
+    <div class="note" data-t="certof"></div>
+    <div class="nm nm-out"></div>
+    <p data-t="certtext" style="max-width:52ch;margin:.5rem auto"></p>
+    <div class="note">App Inventor Academy · <span data-t="certft"></span> · <span id="cdate"></span></div>
+  </div>
+  <div class="row">
+    <button class="btn" id="share" data-t="share"></button>
+    <button class="btn alt" id="dl" data-t="download"></button>
+    <button class="btn alt" data-go="8" data-t="next"></button>
+  </div>
+</section>
+
+<section id="s8">
+  <h2 data-t="uph"></h2>
+  <p>1/3 <span data-t="upprog"></span></p>
+  <div class="bar"><b style="width:33%"></b></div>
+  <div class="card lock"><h3>🔒 <span data-t="m2t"></span></h3><p data-t="m2d"></p></div>
+  <div class="grid">
+    <div class="card"><h3 data-t="pl1"></h3><div class="stat">$0</div><p data-t="pl1d"></p><button class="btn alt demo" data-t="current"></button></div>
+    <div class="card sel"><h3>Educator</h3><div class="stat">$12<small data-t="permo"></small></div><p data-t="pl2d"></p><button class="btn demo" data-t="choose2"></button></div>
+    <div class="card"><h3 data-t="pl3"></h3><div class="stat">$8<small data-t="perdoc"></small></div><p data-t="pl3d"></p><button class="btn alt demo" data-m="t_contact" data-t="contact"></button></div>
+  </div>
+  <p class="note" data-t="demo"></p>
+  <button class="btn alt" id="restart" data-t="restart"></button>
+</section>
+
+<div class="fac"><details><summary data-t="facT"></summary><pre id="log"></pre><button class="btn alt" id="logcopy" data-t="copy"></button></details></div></main>
+<div class="toast" id="toast" role="status"></div>
+<script>
+var T={en:{
+tag:"Teach programming. Certify it. Transform your career.",sub:"Earn verifiable micro-credentials by bringing MIT App Inventor to your real classroom.",cta:"Start free",proof:"Built for educators in Colombia, Mexico and the Dominican Republic. Module 1 is free.",
+f1h:"Learn fast",f1p:"Short lessons you can finish in under 20 minutes.",f2h:"Apply in class",f2p:"Every module ends with a mission for your own students.",f3h:"Get certified",f3p:"A certificate that states the exact skill you demonstrated.",
+regh:"Create your free account",regtime:"Takes less than 3 minutes",lname:"Full name",lmail:"Email",lcountry:"Country",llevel:"Teaching level",larea:"Main subject area",lpw:"Password (6+ characters)",choose:"Select…",other:"Other",lv1:"University",lv2:"Primary / secondary",lv3:"Technical training",create:"Create account",
+e_all:"Please complete all fields.",e_mail:"Enter a valid email address.",e_pw:"Password needs at least 6 characters.",
+hello:"Welcome,",dashsub:"Your next step is ready. Start here.",rec:"Recommended for you",m1t:"Module 1: Your first classroom app",m1d:"Build a simple app and plan how to use it with your students. About 20 minutes.",continue:"Continue to Module 1",st1:"Steps completed",st2:"Credentials earned",st3:"Module unlocked",
+m1goal:"Outcome: you will leave with a working app idea ready for your next class.",a1h:"Meet MIT App Inventor",a1p:"Result: you can navigate the editor and blocks.",a2h:"Build your first app",a2p:"Result: a working quiz app on your screen.",a3h:"Plan your classroom use",a3p:"Result: a 1-class lesson plan.",start1:"Start Module 1",
+mission:"Your mission: take it to your classroom",missionp:"Use what you built with real students, then show us what happened.",pick:"Choose how you will show your evidence",
+e1h:"Photos",e1p:"Pictures of students working.",e2h:"Short video",e2p:"A clip of the activity (max 2 min).",e3h:"Student work",e3p:"Screenshots or files made by students.",exh:"Illustrative examples (sample quotes, not real teachers)",
+x1:"“My 8th graders built a unit converter in one class.” – Math teacher, Colombia",x2:"“I filmed teams demoing their quiz apps.” – Instructor, Mexico",x3:"“Students’ screenshots became my evidence.” – Professor, Dominican Rep.",upload:"Upload my evidence",
+evh:"Upload your evidence",evnote:"complete. You reach 100% when all 3 steps are done.",p1h:"1. Upload files",p1n:"Demo only: files are not stored.",p2h:"2. Describe what happened",p2ph:"What did your students do? What did they learn?",p3h:"3. Add context",c1:"University course",c2:"Secondary class",c3:"Technical workshop",submit:"Submit evidence",
+verified:"Evidence verified",certof:"This certifies that",certtext:"has demonstrated the ability to design and implement a classroom activity with MIT App Inventor, backed by verified evidence from a real class.",share:"Share on LinkedIn",download:"Download",next:"Keep learning",
+uph:"Keep going: unlock your next module",upprog:"of 3 modules completed",m2t:"Module 2: Data and logic in the classroom",m2d:"Locked. Upgrade to continue your path.",pl1:"Free",pl1d:"Module 1 and your first certificate.",current:"Your current plan",pl2d:"All modules, certificates and support.",choose2:"Choose Educator",pl3:"Institutional",perdoc:"/teacher/mo",pl3d:"Licenses for schools and universities.",contact:"Contact us",demo:"Prototype only: no real payments are processed.",restart:"Restart demo",
+t_share:"Demo: LinkedIn sharing would open here.",t_pay:"Demo: payment is not enabled in this prototype.",t_dl:"Opening print dialog…",sp:"Validated with a survey of 51 teachers in 3 countries: 96% would join the free version.",c_co:"Colombia",c_mx:"Mexico",c_do:"Dominican Republic",a1b:"Open the editor, drag blocks, and run an app on the emulator. You will see how students build with blocks instead of typing code.",a2b:"Build a 3-question quiz: a Label for the question, a TextBox for the answer, and a Button that checks it. You can reuse it in any subject.",a3b:"Pick a class topic, decide who builds what, and write a 1-class plan. You will leave with a plan you can run next week.",samp:"Sample content for this prototype.",usesample:"No file yet? Use a sample file",needs:"Still needed: ",mf:"a file",md:"a description of 10+ characters",mc:"a context",ready:"All set. You can submit.",verifying:"Reviewing your evidence…",certft:"Module 1",permo:"/mo",t_contact:"Demo: our team would contact you here.",facT:"Facilitator log",copy:"Copy log",t_copied:"Log copied.",aria_lang:"Language",aria_file:"Upload file"
+},es:{
+tag:"Enseña programación. Certifícalo. Transforma tu carrera.",sub:"Obtén microcredenciales verificables llevando MIT App Inventor a tu aula real.",cta:"Comienza gratis",proof:"Hecho para docentes de Colombia, México y República Dominicana. El módulo 1 es gratis.",
+f1h:"Aprende rápido",f1p:"Lecciones cortas que terminas en menos de 20 minutos.",f2h:"Aplica en el aula",f2p:"Cada módulo termina con una misión para tus estudiantes.",f3h:"Certifícate",f3p:"Un certificado que indica la competencia exacta que demostraste.",
+regh:"Crea tu cuenta gratis",regtime:"Toma menos de 3 minutos",lname:"Nombre completo",lmail:"Correo electrónico",lcountry:"País",llevel:"Nivel de enseñanza",larea:"Área principal",lpw:"Contraseña (mín. 6 caracteres)",choose:"Selecciona…",other:"Otro",lv1:"Universidad",lv2:"Básica / secundaria",lv3:"Formación técnica",create:"Crear cuenta",
+e_all:"Completa todos los campos.",e_mail:"Ingresa un correo válido.",e_pw:"La contraseña necesita al menos 6 caracteres.",
+hello:"Bienvenido/a,",dashsub:"Tu siguiente paso está listo. Empieza aquí.",rec:"Recomendado para ti",m1t:"Módulo 1: Tu primera app para el aula",m1d:"Crea una app sencilla y planea cómo usarla con tus estudiantes. Unos 20 minutos.",continue:"Continuar al Módulo 1",st1:"Pasos completados",st2:"Credenciales obtenidas",st3:"Módulo desbloqueado",
+m1goal:"Resultado: saldrás con una idea de app lista para tu próxima clase.",a1h:"Conoce MIT App Inventor",a1p:"Resultado: navegas el editor y los bloques.",a2h:"Crea tu primera app",a2p:"Resultado: una app de quiz funcionando.",a3h:"Planea el uso en clase",a3p:"Resultado: un plan de clase de 1 sesión.",start1:"Empezar Módulo 1",
+mission:"Tu misión: llévalo al aula",missionp:"Usa lo que creaste con estudiantes reales y muéstranos qué pasó.",pick:"Elige cómo mostrarás tu evidencia",
+e1h:"Fotos",e1p:"Imágenes de estudiantes trabajando.",e2h:"Video corto",e2p:"Un clip de la actividad (máx. 2 min).",e3h:"Trabajo estudiantil",e3p:"Capturas o archivos hechos por estudiantes.",exh:"Ejemplos ilustrativos (frases de muestra, no son docentes reales)",
+x1:"“Mis estudiantes de 8.º crearon un conversor de unidades en una clase.” – Docente de matemáticas, Colombia",x2:"“Grabé a los equipos presentando sus apps de quiz.” – Instructor, México",x3:"“Las capturas de mis estudiantes fueron mi evidencia.” – Profesora, Rep. Dominicana",upload:"Subir mi evidencia",
+evh:"Sube tu evidencia",evnote:"completado. Llegas a 100% al terminar los 3 pasos.",p1h:"1. Sube archivos",p1n:"Solo demo: los archivos no se guardan.",p2h:"2. Describe lo ocurrido",p2ph:"¿Qué hicieron tus estudiantes? ¿Qué aprendieron?",p3h:"3. Agrega contexto",c1:"Curso universitario",c2:"Clase de secundaria",c3:"Taller técnico",submit:"Enviar evidencia",
+verified:"Evidencia verificada",certof:"Se certifica que",certtext:"demostró la capacidad de diseñar e implementar una actividad de aula con MIT App Inventor, respaldada por evidencia verificada de una clase real.",share:"Compartir en LinkedIn",download:"Descargar",next:"Seguir aprendiendo",
+uph:"Sigue avanzando: desbloquea tu próximo módulo",upprog:"módulos completados",m2t:"Módulo 2: Datos y lógica en el aula",m2d:"Bloqueado. Mejora tu plan para continuar.",pl1:"Gratuito",pl1d:"Módulo 1 y tu primer certificado.",current:"Tu plan actual",pl2d:"Todos los módulos, certificados y soporte.",choose2:"Elegir Educator",pl3:"Institucional",perdoc:"/docente/mes",pl3d:"Licencias para colegios y universidades.",contact:"Contáctanos",demo:"Solo prototipo: no se procesan pagos reales.",restart:"Reiniciar demo",
+t_share:"Demo: aquí se abriría LinkedIn.",t_pay:"Demo: el pago no está habilitado en este prototipo.",t_dl:"Abriendo impresión…",sp:"Validado con una encuesta a 51 docentes de 3 países: el 96% participaría en la versión gratuita.",c_co:"Colombia",c_mx:"México",c_do:"República Dominicana",a1b:"Abre el editor, arrastra bloques y ejecuta una app en el emulador. Verás cómo tus estudiantes construyen con bloques en lugar de escribir código.",a2b:"Crea un quiz de 3 preguntas: una Etiqueta para la pregunta, una Caja de texto para la respuesta y un Botón que la revisa. Sirve para cualquier materia.",a3b:"Elige un tema de clase, decide quién construye qué y escribe un plan de 1 sesión. Saldrás con un plan para la próxima semana.",samp:"Contenido de muestra para este prototipo.",usesample:"¿Aún sin archivo? Usa uno de muestra",needs:"Falta: ",mf:"un archivo",md:"una descripción de 10+ caracteres",mc:"un contexto",ready:"Todo listo. Ya puedes enviar.",verifying:"Revisando tu evidencia…",certft:"Módulo 1",permo:"/mes",t_contact:"Demo: aquí nuestro equipo te contactaría.",facT:"Bitácora del facilitador",copy:"Copiar bitácora",t_copied:"Bitácora copiada.",aria_lang:"Idioma",aria_file:"Subir archivo"}};
+var L="en",$=function(s){return document.querySelector(s)},$$=function(s){return Array.prototype.slice.call(document.querySelectorAll(s))};
+var state={name:"",ev:"",cur:1,cred:0,err:"",vw:false},LG=[],T0=Date.now();
+function lg(e){LG.push(((Date.now()-T0)/1000).toFixed(1)+"s  "+e);var p=$("#log");if(p)p.textContent=LG.join("\n")}
+function sv(){try{sessionStorage.setItem("aia",JSON.stringify({n:state.name,g:state.cred}))}catch(e){}}
+function tr(k){return T[L][k]||k}
+function apply(){document.documentElement.lang=L;
+ $$("[data-t]").forEach(function(e){e.textContent=tr(e.getAttribute("data-t"))});
+ $$("[data-p]").forEach(function(e){e.placeholder=tr(e.getAttribute("data-p"))});
+ $("#b-en").className=L==="en"?"on":"";$("#b-es").className=L==="es"?"on":"";
+ $("#cdate").textContent=new Date().toLocaleDateString(L==="en"?"en-US":"es-MX",{year:"numeric",month:"long",day:"numeric"});
+ $("#ev-btn").textContent=tr("submit");document.title=L==="en"?"App Inventor Academy – MVP Prototype":"App Inventor Academy – Prototipo MVP";$$("[data-a]").forEach(function(e){e.setAttribute("aria-label",tr(e.getAttribute("data-a")))});if(state.err)$("#reg-err").textContent=tr(state.err);vtext();evCheck();}
+function toast(k){var t=$("#toast");t.textContent=tr(k);t.style.display="block";setTimeout(function(){t.style.display="none"},2500)}
+function show(n,nh){if(n>2&&!state.name)n=2;state.cur=n;
+ $$("section").forEach(function(s){s.className=s.id==="s"+n?"show":""});
+ $$("#steps i").forEach(function(i,x){i.className=x<n?"on":""});
+ $$(".nm-out").forEach(function(e){e.textContent=state.name});
+ if(!nh){try{location.hash="s"+n}catch(e){}}sv();lg("screen "+n);if(n===3)stats();if(n===7)verify();
+ window.scrollTo(0,0)}
+var st=$("#steps");for(var i=0;i<8;i++)st.appendChild(document.createElement("i"));
+$$("[data-go]").forEach(function(b){b.addEventListener("click",function(){show(+b.getAttribute("data-go"))})});
+$("#b-en").onclick=function(){L="en";lg("lang EN");apply()};$("#b-es").onclick=function(){L="es";lg("lang ES");apply()};
+$("#reg-btn").onclick=function(){
+ var v=function(id){return $(id).value.trim()},err=$("#reg-err");var se=function(k){state.err=k;err.textContent=tr(k);lg("error "+k)};
+ if(!v("#f-name")||!v("#f-mail")||!v("#f-country")||!v("#f-level")||!v("#f-area")||!v("#f-pw")){se("e_all");return}
+ if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v("#f-mail"))){se("e_mail");return}
+ if(v("#f-pw").length<6){se("e_pw");return}
+ state.err="";err.textContent="";state.name=v("#f-name");lg("registered");show(3)};
+function pick(c){$$("#types .card").forEach(function(x){var on=x===c;x.className="card"+(on?" sel":"");x.setAttribute("aria-checked",on)});state.ev=c.getAttribute("data-ev");$("#act-btn").disabled=false}
+$$("#types .card").forEach(function(c){c.onclick=function(){pick(c)};c.onkeydown=function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();pick(c)}}});
+function evCheck(){var a=$("#ev-file").files.length>0,b=$("#ev-desc").value.trim().length>9,c=$("#ev-ctx").value!=="";
+ var p=Math.round(((a?1:0)+(b?1:0)+(c?1:0))/3*100);$("#evbar").style.width=p+"%";$("#evpct").textContent=p;$("#ev-btn").disabled=p<100;var ms=[];if(!a)ms.push(tr("mf"));if(!b)ms.push(tr("md"));if(!c)ms.push(tr("mc"));$("#ev-hint").textContent=ms.length?tr("needs")+ms.join(", "):tr("ready")}
+["#ev-file","#ev-desc","#ev-ctx"].forEach(function(s){$(s).addEventListener("input",evCheck);$(s).addEventListener("change",evCheck)});
+$("#share").onclick=function(){toast("t_share")};
+$("#dl").onclick=function(){toast("t_dl");setTimeout(function(){window.print()},600)};
+$$(".demo").forEach(function(b){b.onclick=function(){lg("click "+b.textContent);toast(b.getAttribute("data-m")||"t_pay")}});
+$("#restart").onclick=function(){try{sessionStorage.clear()}catch(e){}location.hash="";location.reload()};
+function vtext(){$("#vpill").textContent=state.vw?tr("verifying"):tr("verified")}
+function verify(){state.vw=true;$("#cert").className="cert wait";vtext();setTimeout(function(){state.vw=false;state.cred=1;$("#cert").className="cert";vtext();lg("certificate verified");sv()},1800)}
+function stats(){var n=$$(".les").filter(function(d){return d.dataset.seen}).length,s=$$("#s3 .stat");s[0].textContent=n+"/3";s[1].textContent=state.cred}
+$$(".les").forEach(function(d){d.addEventListener("toggle",function(){if(d.open){d.dataset.seen=1;lg("lesson opened")}})});
+$("#sample").onclick=function(){try{var d=new DataTransfer();d.items.add(new File(["sample"],"sample-class-photo.jpg",{type:"image/jpeg"}));$("#ev-file").files=d.files;lg("sample file used");evCheck()}catch(e){}};
+$("#logcopy").onclick=function(){try{navigator.clipboard.writeText(LG.join("\n"));toast("t_copied")}catch(e){}};
+window.addEventListener("hashchange",function(){var m=/^#s([1-8])$/.exec(location.hash),n=m?+m[1]:1;if(n!==state.cur)show(n,true)});
+try{var s0=JSON.parse(sessionStorage.getItem("aia")||"null");if(s0){state.name=s0.n||"";state.cred=s0.g||0}}catch(e){}
+var m0=/^#s([1-8])$/.exec(location.hash);apply();show(m0?+m0[1]:1,true);
+</script>
+</body>
+</html>
